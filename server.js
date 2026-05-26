@@ -3,6 +3,7 @@ import getGithubUser from "./services/githubApi.js";
 const app = express();
 
 const port = 3000;
+app.use(express.static("public"));
 
 app.get("/", (req,res) => {
     res.send("Hello There!");
@@ -13,11 +14,11 @@ app.get("/api/github/:username", async (req,res) => {
         const username = req.params.username;
         const data = await getGithubUser(username);
         res.json(data);
-    } catch (error) {
-        res.status(500).json({
-            error: error.message || "something went wrong!"
-        });
-    }
+    } catch (err) {
+        res.status(err.status || 500).json({
+        error: err.message || "Internal server error"
+    });
+}
 });
 
 app.listen(port, () => {
